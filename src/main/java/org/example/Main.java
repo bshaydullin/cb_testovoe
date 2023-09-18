@@ -2,6 +2,8 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.*;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import static io.restassured.RestAssured.given;
 
 class DownloadFileAPITest {
@@ -17,10 +19,13 @@ class DownloadFileAPITest {
         Response response = given()
                 .when()
                 .get("/s/newbik");
-
         Assertions.assertEquals(200, response.getStatusCode(), "Ошибка: Не удалось выполнить запрос");
 
-        String expectedFileName = "20230918_ED807_full.xml";
+        // Определяем текущую дату в формате "yyyyMMdd"
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        String currentDate = dateFormat.format(new Date());
+
+        String expectedFileName = currentDate + "_ED807_full.xml";
         response.then().assertThat().contentType("application/xml"); // Проверяем, что ответ содержит XML
         File downloadedFile = new File(expectedFileName);
         response.getBody().asInputStream().toFile(downloadedFile);
